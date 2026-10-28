@@ -1,0 +1,24 @@
+# ── Core API ──
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+python-dotenv==1.0.1
+
+# ── ML / DenseNet model ──
+torch
+torchvision
+numpy<2
+Pillow
+opencv-python-headless
+
+# ── LLM chat (Groq) ──
+groq
+
+# ── MedVQA: LLaVA-Med + LoRA (install after training is done) ──
+# Uncomment these when you have downloaded the adapter from Kaggle:
+# transformers==4.40.0
+# peft==0.10.0
+# bitsandbytes==0.43.1
+# accelerate==0.29.3
+# sentencepiece
+# einops
