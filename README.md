@@ -198,7 +198,7 @@ For true image-grounded questions (e.g. *"Is there pneumothorax in this X-ray?"*
 ### Architecture
 
 <p align="center">
-  <img src="docs/medvqa_architecture.png.png" alt="MedVQA — Complete Training & Inference Architecture" width="900">
+  <img src="docs/medvqa_architecture.png" alt="MedVQA — Complete Training & Inference Architecture" width="900">
 </p>
 
 The diagram above covers the full pipeline — dataset structure (VQA-RAD + CheXpert + NIH, 218K QA pairs), the LLaVA-Med model architecture (CLIP ViT-L/14 vision encoder → MLP projector → LLaMA-2 7B/13B language model), the Kaggle fine-tuning workflow with LoRA/QLoRA, the training data format (instruction-tuned CSV), and how the fine-tuned model is loaded into FastAPI via the `/medvqa` endpoint.
