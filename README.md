@@ -196,12 +196,21 @@ For true image-grounded questions (e.g. *"Is there pneumothorax in this X-ray?"*
 
 ### Architecture
 
+<p align="center">
+  <img src="docs/medvqa_architecture.png" alt="MedVQA — Complete Training & Inference Architecture" width="900">
+</p>
+
+The diagram above covers the full pipeline — dataset structure (VQA-RAD + CheXpert + NIH, 218K QA pairs), the LLaVA-Med model architecture (CLIP ViT-L/14 vision encoder → MLP projector → LLaMA-2 7B/13B language model), the Kaggle fine-tuning workflow with LoRA/QLoRA, the training data format (instruction-tuned CSV), and how the fine-tuned model is loaded into FastAPI via the `/medvqa` endpoint.
+
 | Component | Technology | Purpose |
 |:---|:---|:---|
 | Base model | `microsoft/llava-med-v1.5-mistral-7b` | Vision-language foundation model |
-| Fine-tuning | LoRA (Low-Rank Adaptation) | Parameter-efficient adaptation |
+| Vision encoder | CLIP ViT-L/14 | Encodes X-ray image → 256 visual tokens × 1024 dim |
+| Projector | MLP (1024 → 4096) | Aligns visual tokens to language model embedding space |
+| Language model | LLaMA-2 7B / 13B | Generates answer tokens from combined visual + text input |
+| Fine-tuning | LoRA (Low-Rank Adaptation) | Parameter-efficient adaptation (~2–4 GB adapter) |
 | Quantization | 4-bit NF4 (bitsandbytes) | Reduces VRAM for inference |
-| Training data | 315 VQA-RAD chest X-ray QA pairs | Domain-specific visual QA |
+| Training data | 218K QA pairs (CheXpert + NIH + VQA-RAD) | Domain-specific visual QA |
 | Framework | PEFT + Transformers + Accelerate | Adapter loading & inference |
 
 ### How it works
