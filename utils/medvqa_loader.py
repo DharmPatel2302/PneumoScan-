@@ -91,12 +91,28 @@ class MedVQAModel:
         from peft import PeftModel
 
         # 4-bit quantization — keeps VRAM low enough for inference
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit              = True,
-            bnb_4bit_quant_type       = "nf4",
-            bnb_4bit_compute_dtype    = torch.float16,
-            bnb_4bit_use_double_quant = True,
-        )
+        # Only works with CUDA; on CPU, load in float16 instead
+        use_4bit = self.device == "cuda"
+        if use_4bit:
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit              = True,
+                bnb_4bit_quant_type       = "nf4",
+                bnb_4bit_compute_dtype    = torch.float16,
+                bnb_4bit_use_double_quant = True,
+            )
+            load_kwargs = {
+                "quantization_config": bnb_config,
+                "device_map": "auto",
+                "trust_remote_code": True,
+                "torch_dtype": torch.float16,
+            }
+        else:
+            print("[MedVQA] CUDA not available — loading in float16 (no 4-bit quantization)")
+            load_kwargs = {
+                "device_map": {"": self.device},
+                "trust_remote_code": True,
+                "torch_dtype": torch.float16,
+            }
 
         # Load processor (tokenizer + image processor)
         self.processor = AutoProcessor.from_pretrained(
@@ -105,13 +121,10 @@ class MedVQAModel:
         )
         self.processor.tokenizer.padding_side = "left"
 
-        # Load base model quantized
+        # Load base model
         base_model = LlavaForConditionalGeneration.from_pretrained(
             BASE_MODEL_ID,
-            quantization_config = bnb_config,
-            device_map          = "auto",
-            trust_remote_code   = True,
-            torch_dtype         = torch.float16,
+            **load_kwargs,
         )
 
         # Merge LoRA adapter on top

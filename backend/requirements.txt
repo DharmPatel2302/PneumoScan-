@@ -14,11 +14,10 @@ opencv-python-headless
 # ── LLM chat (Groq) ──
 groq
 
-# ── MedVQA: LLaVA-Med + LoRA (install after training is done) ──
-# Uncomment these when you have downloaded the adapter from Kaggle:
-# transformers==4.40.0
-# peft==0.10.0
-# bitsandbytes==0.43.1
-# accelerate==0.29.3
-# sentencepiece
-# einops
+# ── MedVQA: LLaVA-Med + LoRA ──
+transformers==4.40.0
+peft==0.10.0
+bitsandbytes==0.43.1
+accelerate==0.29.3
+sentencepiece
+einops
