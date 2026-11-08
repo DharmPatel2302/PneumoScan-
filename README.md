@@ -13,7 +13,7 @@ It combines **PyTorch**, **FastAPI**, **Groq LLM**, **LLaVA-Med + LoRA**, and a 
   <a href="#-explainable-ai--grad-cam">Grad-CAM XAI</a> ·
   <a href="#-medical-visual-question-answering-medvqa">MedVQA</a> ·
   <a href="#-dual-mode-query-routing">Query Routing</a> ·
-  <a href="#-tech-stack--dependencies">Tech Stack</a> ·
+  <a href="#-project-structure">Project Structure</a> ·
   <a href="#-local-setup--development">Setup</a> ·
   <a href="#-api-endpoints">API</a> ·
   <a href="#-license--disclaimer">License</a>
@@ -264,7 +264,7 @@ Without routing, a question like *"Which lung is more affected?"* would be answe
 
 ---
 
-## �📁 Project Structure
+## 📁 Project Structure
 
 ```
 PneumoScan/
