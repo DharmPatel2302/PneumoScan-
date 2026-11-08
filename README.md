@@ -1,4 +1,4 @@
-# PneumoScan — AI-Powered Chest X-Ray Disease Detection with Explainability
+﻿# PneumoScan — AI-Powered Chest X-Ray Disease Detection with Explainability
 
 PneumoScan is a full-stack AI radiology assistant that detects **11 thoracic conditions** from chest X-rays using a **DenseNet121** deep learning model, explains every prediction with **Grad-CAM** visual heatmaps, and provides an **AI chat assistant (PneumoBot)** powered by Groq LLM for follow-up medical queries — plus a **Medical Visual Question Answering (MedVQA)** module fine-tuned with LoRA on LLaVA-Med.
 
@@ -226,7 +226,7 @@ The diagram above covers the full pipeline — dataset structure (VQA-RAD + CheX
 
 ---
 
-## � Dual-Mode Query Routing
+## 🔀 Dual-Mode Query Routing
 
 Every message sent to PneumoBot passes through a **query classifier** before any LLM call is made. This decides whether the question needs visual reasoning (MedVQA-Bot) or general medical knowledge (PneumoBot), and routes it to the appropriate system prompt and inference parameters.
 
