@@ -90,10 +90,7 @@ PneumoScan addresses all three problems in a single integrated platform:
 
 ## 🗺️ Complete End-to-End Architecture
 
-```
 ![Architecture](docs/Architecture.png)
-
-```
 
 ### Step-by-Step Data Flow
 
