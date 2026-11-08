@@ -42,3 +42,25 @@ desktop.ini
 # ── Logs ──
 *.log
 logs/
+
+# ── Personal / interview prep docs ──
+RMS_FINAL_PROJECT_ALL_README/
+
+# ── Debug / one-off utility scripts ──
+check_model.py
+check_vqarad.py
+
+# ── Old Streamlit prototype (replaced by FastAPI + Next.js) ──
+app.py
+requirement.txt
+
+# ── Raw dataset files (too large / not needed by recruiter) ──
+MEDVQA/VQA_RAD Image Folder/
+MEDVQA/VQA_RAD Dataset Public.json
+MEDVQA/VQA_RAD Dataset Public.xlsx
+MEDVQA/VQA_RAD Dataset Public.xml
+MEDVQA/Readme.docx
+MEDVQA/medvqa_dataset.csv
+
+# ── Duplicate / mis-named image artefact ──
+docs/medvqa_architecture.png.png
