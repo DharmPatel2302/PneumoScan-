@@ -64,27 +64,67 @@ PneumoScan addresses all three problems in a single integrated platform:
 
 ## 🎬 Demo
 
-> **Add your screenshots here** — place image files in a `public/` or `docs/` folder and update the paths below.
+### 1. Home — Upload a Chest X-Ray
 
-### Home — Upload
+Drag-and-drop interface with image preview, format validation, and a multi-stage diagnostic pipeline that keeps the user informed at every step.
 
-![Home](docs/upload.png)
+<p align="center">
+  <img src="docs/upload.png" alt="Home — Upload" width="700">
+</p>
 
-### Results — Multi-Disease Findings + Grad-CAM XAI
+### 2. Prediction Results — Multi-Disease Findings + Grad-CAM XAI
 
-![Results](docs/results.png)
+The model detects 11 thoracic conditions simultaneously. Each finding shows a probability bar with severity colour-coding and a "DETECTED" badge. Three Grad-CAM views (original, heatmap, overlay) are displayed side-by-side so clinicians can visually verify which lung regions drove each prediction.
 
-### PneumoBot — AI Chat Assistant
+<p align="center">
+  <img src="docs/pred_1.png" alt="Prediction Results — Findings Panel" width="700">
+</p>
 
-![Chat](docs/chat.png)
+<p align="center">
+  <img src="docs/pred_2.png" alt="Prediction Results — Grad-CAM XAI Views" width="700">
+</p>
 
-### Clinical PDF Report
+### 3. PneumoBot — AI Chat Assistant
 
-![Report](docs/report.png)
+A floating chatbot powered by Groq LLM answers follow-up questions about the scan. It understands the active diagnosis context and renders rich markdown with tables, lists, and severity badges.
 
-### Gallery — Sample Cases
+<p align="center">
+  <img src="docs/chat.png" alt="PneumoBot — AI Chat Assistant" width="700">
+</p>
 
-![Gallery](docs/gallery.png)
+### 4. MedVQA — Medical Visual Question Answering
+
+For image-grounded questions, the LLaVA-Med + LoRA module analyses the uploaded X-ray directly and returns clinically relevant answers with confidence scores.
+
+<p align="center">
+  <img src="docs/medvqa.png" alt="MedVQA — Visual Question Answering" width="700">
+</p>
+
+### 5. Clinical PDF Report
+
+One click generates a branded, multi-page PDF with diagnosis results, confidence bars, Grad-CAM XAI images, clinical recommendations, and the full PneumoBot chat transcript — complete with a watermark and page numbers.
+
+<p align="center">
+  <img src="docs/report_1.png" alt="Clinical PDF Report — Page 1" width="700">
+</p>
+
+<p align="center">
+  <img src="docs/report_2.png" alt="Clinical PDF Report — Page 2" width="700">
+</p>
+
+### 6. Gallery — Sample Cases
+
+Browse sample pneumonia and normal cases with confidence scores and a lightbox viewer for closer inspection.
+
+<p align="center">
+  <img src="docs/gallery.png" alt="Gallery — Sample Cases" width="700">
+</p>
+
+### 7. About — Tech Stack Overview
+
+<p align="center">
+  <img src="docs/about.png" alt="About — Tech Stack" width="700">
+</p>
 
 ---
 
@@ -171,25 +211,8 @@ For true image-grounded questions (e.g. *"Is there pneumothorax in this X-ray?"*
 3. The model generates a concise answer (max 64 tokens, greedy decoding for determinism).
 4. Confidence is estimated from the softmax probability of the first generated token.
 
-> **Note:** The MedVQA adapter is trained on Kaggle (see `MEDVQA_TRAIN/medvqa_training.ipynb`) and loaded only if the adapter directory exists. When the adapter is not yet available, the `/chat` endpoint falls back to a MedVQA-*simulation* persona that answers as if it analysed the image, using the scan context from the `/predict` results.
 
----
 
-## 🛠️ Tech Stack & Dependencies
-
-| Layer | Technology | Purpose |
-|:---|:---|:---|
-| **ML Model** | DenseNet121 (PyTorch) | Multi-label thoracic disease classification (11 classes) |
-| **Explainable AI** | Grad-CAM + OpenCV | Visual heatmaps of model attention regions |
-| **MedVQA** | LLaVA-Med + LoRA (PEFT, 4-bit) | Visual question answering on chest X-rays |
-| **Backend** | FastAPI, Uvicorn, Python 3.9+ | REST API, model serving, Groq LLM integration |
-| **LLM Engine** | Groq API (Qwen) | Chat assistant with dual-mode system prompts |
-| **Frontend** | Next.js 14, React 18, TypeScript | SPA with App Router, persistent chat context |
-| **Styling** | Tailwind CSS 3.4 | Utility-first responsive design |
-| **Animations** | Framer Motion 11 | Page transitions, element animations |
-| **Icons** | Lucide React | SVG icon library |
-| **PDF Reports** | jsPDF 4.2 | Client-side clinical report generation |
-| **Image Processing** | Pillow, OpenCV (headless) | Image I/O, Grad-CAM colormap, overlay blending |
 
 ---
 
@@ -438,18 +461,6 @@ Then open **http://localhost:3000**
 
 ---
 
-## 🔧 Troubleshooting
-
-| Problem | Solution |
-|---------|----------|
-| `ModuleNotFoundError` | Virtual environment not activated. Run `venv\Scripts\activate` (Windows) first. |
-| `GROQ_API_KEY is not configured` | `backend/.env` missing or has placeholder. Paste your real Groq key. |
-| Frontend shows "Failed to fetch" | Backend not running. Start it first, then refresh. |
-| `model/final_model.pt not found` | Place the trained weights at `model/final_model.pt`. |
-| Port 8000 already in use | Run on a different port: `uvicorn main:app --port 8001 --reload`, then update `frontend/.env.local`. |
-| MedVQA endpoint returns 503 | LoRA adapter not trained yet. Complete the Kaggle notebook and place adapter in `model/medvqa_adapter/`. |
-
----
 
 ## 👤 Author
 
