@@ -12,6 +12,7 @@ It combines **PyTorch**, **FastAPI**, **Groq LLM**, **LLaVA-Med + LoRA**, and a 
   <a href="#-complete-end-to-end-architecture">Architecture</a> ·
   <a href="#-explainable-ai--grad-cam">Grad-CAM XAI</a> ·
   <a href="#-medical-visual-question-answering-medvqa">MedVQA</a> ·
+  <a href="#-dual-mode-query-routing">Query Routing</a> ·
   <a href="#-tech-stack--dependencies">Tech Stack</a> ·
   <a href="#-local-setup--development">Setup</a> ·
   <a href="#-api-endpoints">API</a> ·
@@ -197,7 +198,7 @@ For true image-grounded questions (e.g. *"Is there pneumothorax in this X-ray?"*
 ### Architecture
 
 <p align="center">
-  <img src="docs/medvqa_architecture.png" alt="MedVQA — Complete Training & Inference Architecture" width="900">
+  <img src="docs/medvqa_architecture.png.png" alt="MedVQA — Complete Training & Inference Architecture" width="900">
 </p>
 
 The diagram above covers the full pipeline — dataset structure (VQA-RAD + CheXpert + NIH, 218K QA pairs), the LLaVA-Med model architecture (CLIP ViT-L/14 vision encoder → MLP projector → LLaMA-2 7B/13B language model), the Kaggle fine-tuning workflow with LoRA/QLoRA, the training data format (instruction-tuned CSV), and how the fine-tuned model is loaded into FastAPI via the `/medvqa` endpoint.
@@ -225,7 +226,45 @@ The diagram above covers the full pipeline — dataset structure (VQA-RAD + CheX
 
 ---
 
-## 📁 Project Structure
+## � Dual-Mode Query Routing
+
+Every message sent to PneumoBot passes through a **query classifier** before any LLM call is made. This decides whether the question needs visual reasoning (MedVQA-Bot) or general medical knowledge (PneumoBot), and routes it to the appropriate system prompt and inference parameters.
+
+### Architecture
+
+<p align="center">
+  <img src="docs/query_routing.png" alt="Dual-Mode Query Routing Architecture" width="900">
+</p>
+
+### How the classifier works
+
+The `classify_question()` function in `backend/main.py` inspects the user's message for **image-specific keywords** — phrases that only make sense when referring to an actual scan:
+
+```python
+image_keywords = [
+    "this x-ray", "this image", "this scan", "left lung", "right lung",
+    "visible", "highlighted", "heatmap", "overlay", "region", "area",
+    "where is", "which part", "what do you see", "based on the image", ...
+]
+return "medvqa" if any(kw in message.lower() for kw in image_keywords) else "llm"
+```
+
+### Two separate system prompts & temperatures
+
+| Mode | Triggered by | System persona | Temperature | Max tokens |
+|:---|:---|:---|:---|:---|
+| **MedVQA-Bot** | Image-specific keywords | "You are DIRECTLY ANALYSING the X-ray pixel by pixel" | `0.4` (precise) | 1024 |
+| **PneumoBot** | General medical questions | "You are an expert pulmonary radiology assistant" | `0.7` (natural) | 1024 |
+
+Both modes share the same **scan context block** (primary finding + detected diseases) injected into the system prompt whenever an X-ray has been uploaded — so neither bot loses awareness of the active diagnosis.
+
+### Why this matters
+
+Without routing, a question like *"Which lung is more affected?"* would be answered by a text-only LLM that has no visual access — producing a hallucinated or generic answer. By detecting the intent and switching to the MedVQA-Bot persona (which references the Grad-CAM overlay and scan context), the system gives a grounded, image-aware response without needing to re-run the full MedVQA vision model on every chat turn.
+
+---
+
+## �📁 Project Structure
 
 ```
 PneumoScan/
